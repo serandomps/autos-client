@@ -1,4 +1,5 @@
 var dust = require('dust')();
+var serand = require('serand');
 var Vehicles = require('vehicles').service;
 
 require('gallery');
@@ -15,7 +16,7 @@ module.exports = function (ctx, container, options, done) {
         resolution: '800x450'
     }, function (err, vehicles) {
         if (err) return done(err);
-        dust.render('autos-home', vehicles, function (err, out) {
+        dust.render('autos-home', serand.pack(vehicles, container), function (err, out) {
             if (err) {
                 return done(err);
             }

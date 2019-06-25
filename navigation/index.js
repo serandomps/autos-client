@@ -43,7 +43,7 @@ module.exports = function (ctx, container, options, done) {
         if (err) {
             return done(err);
         }
-        navigation(ctx, container, filter(options, null, links), done);
+        navigation(ctx, container, serand.pack(filter(options, null, links), container), done);
     });
 };
 
@@ -56,6 +56,6 @@ serand.on('user', 'ready', function (token) {
         if (err) {
             return context.done(err);
         }
-        navigation(context.ctx, context.container, filter(context.options, token, links), context.done);
+        navigation(context.ctx, context.container, serand.pack(filter(context.options, token, links), context.container), context.done);
     });
 });
