@@ -6,16 +6,30 @@ var context;
 
 var ready = false;
 
-var render = function (done) {
-    $.ajax({
-        url: utils.resolve('accounts:///apis/v/menus/3'),
-        dataType: 'json',
-        success: function (links) {
-            done(null, links);
+var render = function (token, done) {
+    async.parallel({
+        primary: function (parallelDone) {
+            utils.menus('autos-primary', parallelDone);
         },
-        error: function (xhr, status, err) {
-            done(err || status || xhr);
+        secondary: function (parallelDone) {
+            if (!token) {
+                return parallelDone();
+            }
+            utils.menus('autos-secondary', parallelDone);
         }
+    }, function (err, menus) {
+        if (err) {
+            return done(err);
+        }
+        done(null, {
+            root: {url: 'www://', title: 'serandives'},
+            home: {url: '/', title: 'autos'},
+            global: menus.primary,
+            local: menus.secondary,
+            user: [
+                {url: 'accounts://', title: 'Account'}
+            ]
+        });
     });
 };
 
@@ -42,7 +56,7 @@ module.exports = function (ctx, container, options, done) {
     if (!ready) {
         return;
     }
-    render(function(err, links) {
+    render(ctx.token, function (err, links) {
         if (err) {
             return done(err);
         }
@@ -55,7 +69,7 @@ utils.on('user', 'ready', function (token) {
     if (!context) {
         return;
     }
-    render(function(err, links) {
+    render(token, function (err, links) {
         if (err) {
             return context.done(err);
         }
