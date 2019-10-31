@@ -10,7 +10,7 @@ module.exports = function (ctx, container, options, done) {
     var sandbox = container.sandbox;
     Vehicles.find({
         sort: {
-            createdAt: -1
+            updatedAt: -1
         },
         count: 2,
         resolution: '800x450'
