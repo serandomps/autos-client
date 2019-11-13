@@ -9,10 +9,12 @@ dust.loadSource(dust.compile(require('./template'), 'autos-home'));
 module.exports = function (ctx, container, options, done) {
     var sandbox = container.sandbox;
     Vehicles.find({
-        sort: {
-            updatedAt: -1
+        query: {
+            sort: {
+                updatedAt: -1
+            },
+            count: 5
         },
-        count: 2,
         resolution: '800x450'
     }, function (err, vehicles) {
         if (err) return done(err);
@@ -28,17 +30,36 @@ module.exports = function (ctx, container, options, done) {
                 ready: function () {
                     var o = [];
                     vehicles.forEach(function (vehicle) {
+                        var titleHtml = '<span class="text-light">' + vehicle._.make.title + ' ' + vehicle._.model.title + '</span>';
+                        titleHtml += '<span class="text-warning">';
+                        titleHtml += vehicle.edition ? (' ' + vehicle.edition) : '';
+                        titleHtml += ' ' + moment(vehicle.year).year();
+                        titleHtml += '</span>';
                         var images = vehicle._.images || [];
+                        images = images.splice(0, 1);
                         images.forEach(function (image) {
                             o.push({
-                                href: image.url
+                                href: image.url,
+                                titleHtml: titleHtml,
+                                url: '/vehicles/' + vehicle.id
                             });
                         });
                     });
-                    blueimp.Gallery(o, {
+                    var gallery = blueimp.Gallery(o, {
                         container: $('.blueimp-gallery-carousel', sandbox),
                         carousel: true,
-                        stretchImages: true
+                        stretchImages: true,
+                        titleElement: 'a',
+                        onslide: function (index, slide) {
+                            var entry = o[index];
+                            $('.blueimp-gallery-carousel .title', sandbox).attr('href', entry.url).html(entry.titleHtml);
+                        }
+                    });
+                    $('.slides', sandbox).on('click', function () {
+                        var index = gallery.getIndex();
+                        var entry = o[index];
+                        window.open(entry.url, '_blank');
+                        return true;
                     });
                 }
             });
