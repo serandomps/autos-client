@@ -31,7 +31,8 @@
         "home/styles.css"
     ],
     "templates": [
-        "home/template.html"
+        "home/template.html",
+        "home/details.html"
     ],
     "main": "index.js"
 }

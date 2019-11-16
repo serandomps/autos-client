@@ -2,7 +2,7 @@
     margin-top: 0;
 }
 
-.sandbox-autos-client .blueimp-gallery-carousel .slides {
+.sandbox-autos-client .blueimp-gallery-carousel .slides, .sandbox-autos-client .blueimp-gallery-carousel .indicator {
     cursor: pointer;
 }
 
@@ -14,6 +14,14 @@
     padding-top: 80px;
     padding-bottom: 32px;
     margin: 0;
-    background-image: linear-gradient(to bottom, hsla(0,0%,80%,0), rgba(0,0,0,.75));
+    background-image: linear-gradient(to bottom, hsla(0,0%,80%,0), rgba(0,0,0,1));
     font-size: 1.25rem;
+}
+
+.sandbox-autos-client .blueimp-gallery-carousel .primary {
+    font-size: 1.25rem;
+}
+
+.sandbox-autos-client .blueimp-gallery-carousel .secondary {
+    font-size: 1rem;
 }

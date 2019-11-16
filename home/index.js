@@ -4,6 +4,7 @@ var Vehicles = require('vehicles').service;
 
 require('gallery');
 
+dust.loadSource(dust.compile(require('./details'), 'autos-home-details'));
 dust.loadSource(dust.compile(require('./template'), 'autos-home'));
 
 module.exports = function (ctx, container, options, done) {
@@ -30,20 +31,9 @@ module.exports = function (ctx, container, options, done) {
                 ready: function () {
                     var o = [];
                     vehicles.forEach(function (vehicle) {
-                        var titleHtml = '<span class="text-light">' + vehicle._.make.title + ' ' + vehicle._.model.title + '</span>';
-                        titleHtml += '<span class="text-warning">';
-                        titleHtml += vehicle.edition ? (' ' + vehicle.edition) : '';
-                        titleHtml += ' ' + moment(vehicle.year).year();
-                        titleHtml += '</span>';
                         var images = vehicle._.images || [];
-                        images = images.splice(0, 1);
-                        images.forEach(function (image) {
-                            o.push({
-                                href: image.url,
-                                titleHtml: titleHtml,
-                                url: '/vehicles/' + vehicle.id
-                            });
-                        });
+                        var href = images.length ? images[0].url : '';
+                        o.push({href: href});
                     });
                     var gallery = blueimp.Gallery(o, {
                         container: $('.blueimp-gallery-carousel', sandbox),
@@ -51,14 +41,21 @@ module.exports = function (ctx, container, options, done) {
                         stretchImages: true,
                         titleElement: 'a',
                         onslide: function (index, slide) {
-                            var entry = o[index];
-                            $('.blueimp-gallery-carousel .title', sandbox).attr('href', entry.url).html(entry.titleHtml);
+                            var vehicle = vehicles[index];
+                            var url = '/vehicles/' + vehicle.id;
+                            dust.render('autos-home-details', serand.pack(vehicle, container), function (err, out) {
+                                if (err) {
+                                    return console.error(err);
+                                }
+                                $('.blueimp-gallery-carousel .title', sandbox).attr('href', url).html(out);
+                            });
                         }
                     });
                     $('.slides', sandbox).on('click', function () {
                         var index = gallery.getIndex();
-                        var entry = o[index];
-                        window.open(entry.url, '_blank');
+                        var vehicle = vehicles[index];
+                        var url = '/vehicles/' + vehicle.id;
+                        window.open(url, '_blank');
                         return true;
                     });
                 }
