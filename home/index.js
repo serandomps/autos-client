@@ -15,8 +15,7 @@ module.exports = function (ctx, container, options, done) {
                 updatedAt: -1
             },
             count: 5
-        },
-        resolution: '800x450'
+        }
     }, function (err, vehicles) {
         if (err) return done(err);
         dust.render('autos-home', serand.pack(vehicles, container), function (err, out) {
@@ -32,7 +31,7 @@ module.exports = function (ctx, container, options, done) {
                     var o = [];
                     vehicles.forEach(function (vehicle) {
                         var images = vehicle._.images || [];
-                        var href = images.length ? images[0].url : '';
+                        var href = images.length ? images[0].x800 : '';
                         o.push({href: href});
                     });
                     var gallery = blueimp.Gallery(o, {
